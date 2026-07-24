@@ -37,7 +37,7 @@ async function userRegisterController(req, res) {
 
         res.cookie("token", token)
 
-       
+        await emailService.sendRegistrationEmail(user.email, user.name)
 
         return res.status(201).json({
             user: {
@@ -46,15 +46,14 @@ async function userRegisterController(req, res) {
                 name: user.name
             },
             token
-        }),  await emailService.sendRegistrationEmail(user.email, user.name)
+        })  
+        
         
     } catch (error) {
         return res.status(500).json({
             message: error.message || "Internal server error",
             status: "Failed"
         })
-
-        
     }
 
     

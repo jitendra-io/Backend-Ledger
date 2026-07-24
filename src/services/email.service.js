@@ -49,9 +49,10 @@ async function sendRegistrationEmail(userEmail, name){
     We're excited to have ypu on board!\n\nBest regards ,\nThe Backend Ledger Team`
 
     const html = `<p>Hello ${name},</p><p>Thank you for registering at Backend
-    Ledger. We're excited to have you on board !< /p><p>Best regards,<br>The Backend
+    Ledger. We're excited to have you on board!</p><p>Best regards,<br>The Backend
     Ledger Team</p>`
 
+    await sendEmail(userEmail, subject, text, html);
 }
 
 module.exports = {
