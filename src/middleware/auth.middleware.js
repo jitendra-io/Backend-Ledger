@@ -3,20 +3,20 @@ const jwt = require("jsonwebtoken")
 
 
 
-async function authMiddleware(req, res, next){
+async function authMiddleware(req, res, next) {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
 
 
-    if (!token){
+    if (!token) {
         return res.status(401).json({
             message: "Unauthorized access, token is missing😒 "
         })
     }
 
     try {
-        
 
-        const decoded =jwt.verify(token, process.env.JWT_SECRET)
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const user = await userModel.findById(decoded.userId)
 
         req.user = user
@@ -31,10 +31,10 @@ async function authMiddleware(req, res, next){
     }
 }
 
-async function authSystemUserMiddleware(req, res, next){
+async function authSystemUserMiddleware(req, res, next) {
     const token = req.cookies.token || req.headers.authorization?.split("")[1]
 
-    if (!token){
+    if (!token) {
         return res.status(401).json({
             message: "Unauthorized access, token is missing"
         })
@@ -44,7 +44,7 @@ async function authSystemUserMiddleware(req, res, next){
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
         const user = await userModel.findById(decoded.userId).select("+systemUser")
-        if(!user.systemUser){
+        if (!user.systemUser) {
             return res.status(403).json({
                 message: "Forbidden access, not a system user"
             })
@@ -62,6 +62,6 @@ async function authSystemUserMiddleware(req, res, next){
 
 
 module.exports = {
-    authMiddleware, 
+    authMiddleware,
     authSystemUserMiddleware
 }

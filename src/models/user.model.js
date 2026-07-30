@@ -1,4 +1,4 @@
-const mongoose = require ("mongoose")
+const mongoose = require("mongoose")
 const bcrypt = require("bcryptjs")
 
 
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
         minlength: [6, "Password must contain minimum of six characters"],
         select: false
     },
-    sustemUser:{
+    sustemUser: {
         type: Boolean,
         default: false,
         immutable: true,

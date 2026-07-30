@@ -46,7 +46,7 @@ async function sendRegistrationEmail(userEmail, name){
 
     const subject = "Welcome to Backend Ledger!"
     const text = `Hello ${name},\n\nThank you for registering at Backend Ledger.
-    We're excited to have ypu on board!\n\nBest regards ,\nThe Backend Ledger Team`
+    We're excited to have you on board!\n\nBest regards ,\nThe Backend Ledger Team`
 
     const html = `<p>Hello ${name},</p><p>Thank you for registering at Backend
     Ledger. We're excited to have you on board!</p><p>Best regards,<br>The Backend
