@@ -1,2 +1,16 @@
+# Dependencies
 node_modules/
+
+# Environment variables & secrets (NEVER commit these)
 .env
+.env.*
+*.env
+!.env.example
+
+# Local nested backups
+.git copy/
+backend-ledger-main/
+
+# OS and logs
+.DS_Store
+*.log

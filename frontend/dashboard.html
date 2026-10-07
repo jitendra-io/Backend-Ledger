@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ledger — Dashboard</title>
+    <meta name="description" content="Manage your Ledger banking accounts, send money, and review your transaction history." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-bracket">[</span>LEDGER<span class="logo-bracket">]</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" id="nav-home" onclick="showSection('home')">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Home
+            </a>
+            <a href="#" class="nav-item" id="nav-transfer" onclick="showSection('transfer')">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                Transfer
+            </a>
+            <a href="#" class="nav-item" id="nav-account" onclick="showSection('account')">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                Account
+            </a>
+            <a href="#" class="nav-item" id="nav-history" onclick="showSection('history')">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                History
+            </a>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="user-chip" id="user-chip">
+                <div class="user-avatar" id="user-avatar">?</div>
+                <div class="user-info">
+                    <span class="user-name" id="sidebar-username">Loading…</span>
+                    <span class="user-email" id="sidebar-email"></span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ===== MOBILE HAMBURGER ===== -->
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+    </button>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+        <!-- ===== TOP BAR ===== -->
+        <header class="topbar">
+            <div class="topbar-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Search transactions, accounts…" id="global-search" oninput="handleSearch(this.value)" />
+            </div>
+            <div class="topbar-actions">
+                <button class="topbar-btn" title="Refresh" onclick="refreshDashboard()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
+                </button>
+                <button class="topbar-btn" title="History" onclick="showSection('history')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    History
+                </button>
+                <div class="topbar-avatar" id="topbar-avatar">?</div>
+            </div>
+        </header>
+
+        <!-- ========== HOME SECTION ========== -->
+        <section class="section active" id="section-home">
+            <h1 class="section-title">Home</h1>
+
+            <!-- Balance Hero -->
+            <div class="balance-hero">
+                <div class="balance-main">
+                    <span class="balance-label">Total Balance</span>
+                    <div class="balance-amount-row">
+                        <span class="balance-currency">₹</span>
+                        <span class="balance-amount" id="hero-balance">—</span>
+                        <span class="balance-badge positive" id="hero-badge">ACTIVE</span>
+                    </div>
+                    <span class="balance-sub" id="hero-account-id"></span>
+                </div>
+                <div class="hero-actions">
+                    <button class="action-pill receive" onclick="showSection('account')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+                        Receive
+                    </button>
+                    <button class="action-pill send" onclick="showSection('transfer')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                        Send
+                    </button>
+                    <button class="action-pill new-acc" onclick="showSection('account')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        New Account
+                    </button>
+                </div>
+            </div>
+
+            <!-- No Account Banner -->
+            <div class="no-account-banner hidden" id="no-account-banner">
+                <div class="banner-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <div class="banner-text">
+                    <strong>No Account Yet</strong>
+                    <p>Create your first account to start sending and receiving money.</p>
+                </div>
+                <button class="banner-cta" onclick="showSection('account')">Create Account &rarr;</button>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="card" id="home-recent-card">
+                <div class="card-header">
+                    <h2>Recent Transactions</h2>
+                    <button class="card-link" onclick="showSection('history')">View all &rarr;</button>
+                </div>
+                <div id="home-tx-list" class="tx-list">
+                    <div class="skeleton-list">
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon credit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Credited</span>
+                        <span class="stat-value green" id="stat-credit">—</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon debit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Debited</span>
+                        <span class="stat-value red" id="stat-debit">—</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon tx-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Transactions</span>
+                        <span class="stat-value" id="stat-count">—</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TRANSFER SECTION ========== -->
+        <section class="section" id="section-transfer">
+            <h1 class="section-title">Transfer Money</h1>
+            <div class="two-col">
+                <!-- Transfer Form Card -->
+                <div class="card transfer-card">
+                    <div class="card-header">
+                        <h2>Send Funds</h2>
+                        <div class="swap-badge">INSTANT</div>
+                    </div>
+
+                    <div class="send-amount-display">
+                        <span class="send-label">Send</span>
+                        <div class="amount-row">
+                            <span class="amount-prefix">₹</span>
+                            <input type="number" id="tf-amount" class="amount-input" placeholder="0" min="1" />
+                        </div>
+                    </div>
+
+                    <div class="transfer-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+
+                    <form id="transfer-form" onsubmit="handleTransfer(event)">
+                        <div class="form-group">
+                            <label for="tf-from">From Account</label>
+                            <select id="tf-from" required>
+                                <option value="">Select your account…</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tf-to">To Account ID</label>
+                            <input type="text" id="tf-to" placeholder="Paste recipient account ID" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="tf-note">Idempotency Key <span class="hint">(unique per transfer)</span></label>
+                            <div class="input-wrap">
+                                <input type="text" id="tf-idempotency" placeholder="Auto-generated" required />
+                                <button type="button" class="refresh-key-btn" onclick="generateIdempotencyKey()" title="Generate new key">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="transfer-error" class="form-error hidden"></div>
+                        <div id="transfer-success" class="form-success hidden"></div>
+                        <button type="submit" class="submit-btn full-width" id="transfer-submit-btn">
+                            <span class="btn-text">Send Money</span>
+                            <span class="btn-spinner hidden"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="transfer-info-col">
+                    <div class="card info-card">
+                        <h3>Your Account ID</h3>
+                        <p class="info-desc">Share this ID so others can send you money.</p>
+                        <div class="copy-box" id="my-account-id-box">
+                            <span id="my-account-id-display">—</span>
+                            <button class="copy-btn" onclick="copyAccountId()" title="Copy">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card info-card">
+                        <h3>Transfer Tips</h3>
+                        <ul class="tip-list">
+                            <li><span class="tip-dot"></span>Verify recipient account ID before sending</li>
+                            <li><span class="tip-dot"></span>Transactions are processed instantly</li>
+                            <li><span class="tip-dot"></span>Each transfer needs a unique idempotency key</li>
+                            <li><span class="tip-dot"></span>Ensure sufficient balance before transferring</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ACCOUNT SECTION ========== -->
+        <section class="section" id="section-account">
+            <h1 class="section-title">Account</h1>
+            <div class="two-col">
+                <!-- Account Details -->
+                <div class="card account-card">
+                    <div class="card-header">
+                        <h2>My Account</h2>
+                        <span class="status-badge active" id="acc-status-badge">ACTIVE</span>
+                    </div>
+                    <div class="account-info-grid" id="account-info-grid">
+                        <div class="info-row">
+                            <span class="info-key">Account ID</span>
+                            <span class="info-val mono" id="acc-id-val">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Currency</span>
+                            <span class="info-val" id="acc-currency-val">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Status</span>
+                            <span class="info-val" id="acc-status-val">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Created</span>
+                            <span class="info-val" id="acc-created-val">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Balance</span>
+                            <span class="info-val green bold" id="acc-balance-val">—</span>
+                        </div>
+                    </div>
+                    <div id="no-account-msg" class="no-account-msg hidden">
+                        <p>You don't have an account yet. Create one below.</p>
+                    </div>
+                </div>
+
+                <!-- Create Account -->
+                <div class="card create-account-card">
+                    <div class="card-header">
+                        <h2>Create New Account</h2>
+                    </div>
+                    <p class="create-desc">Open a new banking account. Your account will be ready to use immediately after creation.</p>
+                    <form id="create-account-form" onsubmit="handleCreateAccount(event)">
+                        <div class="form-group">
+                            <label for="ca-currency">Currency</label>
+                            <select id="ca-currency" required>
+                                <option value="INR">INR — Indian Rupee</option>
+                                <option value="USD">USD — US Dollar</option>
+                                <option value="EUR">EUR — Euro</option>
+                                <option value="GBP">GBP — British Pound</option>
+                            </select>
+                        </div>
+                        <div id="create-acc-error" class="form-error hidden"></div>
+                        <div id="create-acc-success" class="form-success hidden"></div>
+                        <button type="submit" class="submit-btn" id="create-acc-btn">
+                            <span class="btn-text">Create Account</span>
+                            <span class="btn-spinner hidden"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- User Profile -->
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h2>Profile</h2>
+                </div>
+                <div class="profile-content">
+                    <div class="profile-avatar-large" id="profile-avatar-large">?</div>
+                    <div class="profile-details">
+                        <div class="info-row">
+                            <span class="info-key">Name</span>
+                            <span class="info-val" id="profile-name">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Email</span>
+                            <span class="info-val" id="profile-email">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">User ID</span>
+                            <span class="info-val mono" id="profile-id">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== HISTORY SECTION ========== -->
+        <section class="section" id="section-history">
+            <h1 class="section-title">Transaction History</h1>
+            <div class="history-toolbar">
+                <div class="filter-row">
+                    <button class="filter-btn active" onclick="filterTx('all', this)">All</button>
+                    <button class="filter-btn" onclick="filterTx('credit', this)">Credits</button>
+                    <button class="filter-btn" onclick="filterTx('debit', this)">Debits</button>
+                </div>
+                <div class="search-inline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" placeholder="Filter transactions…" id="history-search" oninput="filterSearch(this.value)" />
+                </div>
+            </div>
+            <div class="card">
+                <div id="history-tx-list" class="tx-list">
+                    <div class="skeleton-list">
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                    </div>
+                </div>
+                <div id="history-empty" class="empty-state hidden">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <p>No transactions found</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== TOAST NOTIFICATION ===== -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
